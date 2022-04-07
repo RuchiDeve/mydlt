@@ -8,7 +8,7 @@
 
     <!-- Tailwind -->
     {{--<link href="https://unpkg.com/tailwindcss/dist/tailwind.min.css" rel="stylesheet">--}}
-    <link rel="stylesheet" href="/assets/vendor/tailwind-2.2.9.min.css">
+    <link rel="stylesheet" href="/assets/css/tailwind-2.2.9.min.css">
 
     <link rel="stylesheet"
             href="/assets/vendor/@fortawesome/fontawesome-free/css/all.min.css"/>
