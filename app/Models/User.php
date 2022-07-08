@@ -27,6 +27,7 @@ class User extends Authenticatable
         'sms_unit_balance',
     ];
 
+
     public function getSmsBalance()
     {
         return$this->sms_unit_balance;

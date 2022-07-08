@@ -13,5 +13,8 @@ class VerifyCsrfToken extends Middleware
      */
     protected $except = [
         //
+        'paystack/*',
+        'paystack',
+        '/sms/pay',
     ];
 }

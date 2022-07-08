@@ -40,6 +40,11 @@ Route::prefix('app')->name('app.')->middleware('auth')->group(function (){
         'purchaseSms'
     ])->name('sms.purchase');
 
+    Route::get('pay', [
+        \App\Http\Controllers\DashboardController::class,
+        'webhook'
+    ])->name('webhook');
+
 
     Route::view('domain', 'app.domain')->name('domain');
     Route::view('enquiries', 'app.enquiries')->name('enquiries');

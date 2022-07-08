@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 
 class SmsPurchaseController extends Controller
 {
@@ -26,4 +27,6 @@ class SmsPurchaseController extends Controller
 
         return back();
     }
+
+
 }
