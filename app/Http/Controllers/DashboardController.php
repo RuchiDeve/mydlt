@@ -29,7 +29,7 @@ class DashboardController extends Controller
           CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
           CURLOPT_CUSTOMREQUEST => "GET",
           CURLOPT_HTTPHEADER => array(
-            "Authorization: Bearer sk_test_da5186ad90c40af18317d8b6aa0b62a6b95d19c3",
+            "Authorization: Bearer sk_live_6d1eb2839530df1d18c7b60fb3a959018a4fb6ad",
             "Cache-Control: no-cache",
           ),
         ));
