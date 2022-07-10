@@ -4,6 +4,7 @@ namespace App\Extensions\Sms\Drivers;
 use App\Extensions\Sms\Contracts\TextMessengerInterface;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\GuzzleException;
+use Illuminate\Support\Facades\Log;
 
 class KudiSms implements TextMessengerInterface
 {
@@ -11,6 +12,9 @@ class KudiSms implements TextMessengerInterface
     const AUTH_USERNAME = 'deecode.dlt@gmail.com';
     const AUTH_PASSWORD = 'benatry24';
 
+    //termii api details
+    const KEY = "TLu2cHpUAXExHgZYiADWwCsUZNoL2kr9plR5t9NYtoJ6ekYAmvnXCvmw2AoMSq";
+    const T_DOMAIN = "https://api.ng.termii.com/api";
 
     /**
      * @param string $message
@@ -32,13 +36,14 @@ class KudiSms implements TextMessengerInterface
 
         try {
             $mobiles = implode(', ', $phone_numbers);
-            $res = $client->request('GET', self::API_DOMAIN, [
+            $res = $client->request('GET', self::T_DOMAIN."/sms/send", [
                 'query' => [
-                    'sender' => $sender,
-                    'mobiles' => $mobiles,
-                    'username' => self::AUTH_USERNAME,
-                    'password' => self::AUTH_PASSWORD,
-                    'message' => $message
+                    'api_key' => self::KEY,
+                    'from' => $sender,
+                    'to' => $mobiles,
+                    'type' => "plain",
+                    'channel' => "generic",
+                    'sms' => $message
                 ],
                 'verify' => false
             ]);
@@ -76,12 +81,11 @@ class KudiSms implements TextMessengerInterface
 
         $result = [];
 
+
         try {
-            $res = $client->request('GET', self::API_DOMAIN, [
+            $res = $client->request('GET', self::T_DOMAIN."/get-balance", [
                 'query' => [
-                    'username' => self::AUTH_USERNAME,
-                    'password' => self::AUTH_PASSWORD,
-                    'action' => 'balance'
+                    'api_key' => self::KEY,
                 ],
                 'verify' => false
             ]);
@@ -89,7 +93,7 @@ class KudiSms implements TextMessengerInterface
             $response = $res->getBody()->getContents() ?? null;
 
             $response_decoded = json_decode($response, true);
-
+                Log::info($response_decoded);
             return $response_decoded['balance'] ?? 0;
 
         } catch (GuzzleException $e) {
@@ -101,3 +105,4 @@ class KudiSms implements TextMessengerInterface
     }
 
 }
+

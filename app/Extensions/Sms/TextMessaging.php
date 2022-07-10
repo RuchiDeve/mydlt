@@ -8,7 +8,7 @@ use App\Extensions\Sms\Contracts\TextMessengerInterface;
 class TextMessaging
 {
 
-    const SMS_CHARGE_PER_UNIT_IN_NGN = 2.8;
+    const SMS_CHARGE_PER_UNIT_IN_NGN = 2.0;
 
 
     public static function getSmsCreditBalance()
