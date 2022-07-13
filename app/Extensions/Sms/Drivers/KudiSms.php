@@ -13,7 +13,7 @@ class KudiSms implements TextMessengerInterface
     const AUTH_PASSWORD = 'benatry24';
 
     //termii api details
-    const KEY = "TLu2cHpUAXExHgZYiADWwCsUZNoL2kr9plR5t9NYtoJ6ekYAmvnXCvmw2AoMSq";
+    const KEY = "TLFrFAnrVZoDf74GQ4buCKQ7SfTmCohBCrXdCDUfPIizZFOFy2DHBmt81ac4G6";
     const T_DOMAIN = "https://api.ng.termii.com/api";
 
     /**
@@ -22,7 +22,7 @@ class KudiSms implements TextMessengerInterface
      * @param string $sender
      * @return array
      */
-    public function send(string $message, array $phone_numbers, string $sender = 'DLT')
+    public function send(string $message, array $phone_numbers, string $sender = 'mydlt')
     {
         // TODO: Implement send() method.
         /*
@@ -36,7 +36,7 @@ class KudiSms implements TextMessengerInterface
 
         try {
             $mobiles = implode(', ', $phone_numbers);
-            $res = $client->request('GET', self::T_DOMAIN."/sms/send", [
+            $res = $client->request('POST', self::T_DOMAIN."/sms/send", [
                 'query' => [
                     'api_key' => self::KEY,
                     'from' => $sender,
@@ -80,8 +80,6 @@ class KudiSms implements TextMessengerInterface
         $client = new Client();
 
         $result = [];
-
-
         try {
             $res = $client->request('GET', self::T_DOMAIN."/get-balance", [
                 'query' => [
@@ -89,11 +87,26 @@ class KudiSms implements TextMessengerInterface
                 ],
                 'verify' => false
             ]);
+            // $sender = "mydlt";
+            // $phone_numbers = ['2347064641016','2348063717797'];
+            // $message = "Testing out api now now";
+            // $mobiles = implode(', ', $phone_numbers);
+            // $res = $client->request('POST', self::T_DOMAIN."/sms/send", [
+            //     'query' => [
+            //         'api_key' => self::KEY,
+            //         'from' => $sender,
+            //         'to' => "2347064641016",
+            //         'type' => "plain",
+            //         'channel' => "generic",
+            //         'sms' => $message
+            //     ],
+            //     'verify' => false
+            // ]);
 
             $response = $res->getBody()->getContents() ?? null;
 
             $response_decoded = json_decode($response, true);
-                Log::info($response_decoded);
+              //  Log::info($response_decoded);
             return $response_decoded['balance'] ?? 0;
 
         } catch (GuzzleException $e) {

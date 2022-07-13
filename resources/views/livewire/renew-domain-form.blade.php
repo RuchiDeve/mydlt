@@ -76,7 +76,7 @@
                 key: 'pk_live_036013ff9241213fc1ace2504181d9a1981ea791', // Replace with your public key
                 email: "{{ auth()->user()->email }}",
                 label: "For Domain",
-                amount: document.getElementById("amount").value*100,
+                amount: document.getElementById("amount").value,
                 metadata: {
                     'paymentFor': 'domain',
                     'email': '{{ auth()->user()->email }}',

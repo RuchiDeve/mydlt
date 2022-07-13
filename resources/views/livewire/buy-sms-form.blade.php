@@ -85,11 +85,12 @@
         //paymentForm.addEventListener("submit", payWithPaystack, false);
         function payWithPaystack() {
             //e.preventDefault();
+            var amount = parseInt(document.getElementById("amount").value);
             let handler = PaystackPop.setup({
                 key: 'pk_live_036013ff9241213fc1ace2504181d9a1981ea791', // Replace with your public key
                 email: "{{ auth()->user()->email }}",
                 label: "For " + document.getElementById("unit").value + ' units',
-                amount: document.getElementById("amount").value,
+                amount: amount+100,
                 metadata: {
                     'paymentFor': 'sms',
                     'email': '{{ auth()->user()->email }}',
