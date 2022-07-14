@@ -4,13 +4,15 @@ namespace App\Extensions\Sms\Drivers;
 use App\Extensions\Sms\Contracts\TextMessengerInterface;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\GuzzleException;
+use Illuminate\Support\Facades\Log;
+use Zeevx\LaraTermii\LaraTermii;
 
-class KudiSms implements TextMessengerInterface
+class TermiiSms implements TextMessengerInterface
 {
-    const API_DOMAIN = 'https://account.kudisms.net/api/';
-    const AUTH_USERNAME = 'deecode.dlt@gmail.com';
-    const AUTH_PASSWORD = 'benatry24';
 
+    //termii api details
+    const API_KEY = "TLFrFAnrVZoDf74GQ4buCKQ7SfTmCohBCrXdCDUfPIizZFOFy2DHBmt81ac4G6";
+    const API_DOMAIN = "https://api.ng.termii.com/api";
 
     /**
      * @param string $message
@@ -18,46 +20,45 @@ class KudiSms implements TextMessengerInterface
      * @param string $sender
      * @return array
      */
-    public function send(string $message, array $phone_numbers, string $sender = 'DLT')
+    public function send(string $message, array $phone_numbers, string $sender = 'mydlt')
     {
         // TODO: Implement send() method.
         /*
-         * https://account.kudisms.net/api/?username=user&password=pass&message=test
-         * &sender=welcome&mobiles=2348030000000,2348020000000
+         * https://developers.termii.com/messaging
+         *
          */
-
         $client = new Client();
+
+        $oldBalance = $this->getBalanceCredit();
 
         $result = [];
 
         try {
             $mobiles = implode(', ', $phone_numbers);
-            $res = $client->request('GET', self::API_DOMAIN, [
+            $res = $client->request('POST', self::API_DOMAIN."/sms/send", [
                 'query' => [
-                    'sender' => $sender,
-                    'mobiles' => $mobiles,
-                    'username' => self::AUTH_USERNAME,
-                    'password' => self::AUTH_PASSWORD,
-                    'message' => $message
+                    'api_key' => self::API_KEY,
+                    'from' => $sender,
+                    'to' => $mobiles,
+                    'type' => "plain",
+                    'channel' => "generic",
+                    'sms' => $message
                 ],
                 'verify' => false
             ]);
 
             $response = $res->getBody()->getContents() ?? null;
-
-            /*
-             * Success Response: {"status":"OK","count":1,"price":2}
-                Failed Response: {"error":"Login denied.","errno":"103"}
-             */
             $response_decoded = json_decode($response, true);
-            if(isset($response_decoded['error'])){
-                $result['error'] = true;
-                $result['remark'] = $response_decoded['error'];
-            } elseif (isset($response_decoded['status']) && ($response_decoded['status'] == 'OK')){
+
+            if($response_decoded['code'] == 'ok'){
                 $result['error'] = false;
                 $result['response'] = $response_decoded;
-                $result['count'] = $response_decoded['count'];
-                $result['remark'] = 'Message was sent successfully. ' . $response_decoded['count'] . ' units was used.';
+                $result['count'] = $oldBalance - $response_decoded['balance'];
+                $result['remark'] = 'Message was sent successfully.';
+
+            } else{
+                $result['error'] = true;
+                $result['remark'] = "Message could\'nt sent";
             }
 
             return $result;
@@ -72,24 +73,20 @@ class KudiSms implements TextMessengerInterface
 
     public function getBalanceCredit()
     {
+
         $client = new Client();
 
         $result = [];
-
         try {
-            $res = $client->request('GET', self::API_DOMAIN, [
+            $res = $client->request('GET', self::API_DOMAIN."/get-balance", [
                 'query' => [
-                    'username' => self::AUTH_USERNAME,
-                    'password' => self::AUTH_PASSWORD,
-                    'action' => 'balance'
+                    'api_key' => self::API_KEY,
                 ],
                 'verify' => false
             ]);
 
             $response = $res->getBody()->getContents() ?? null;
-
             $response_decoded = json_decode($response, true);
-
             return $response_decoded['balance'] ?? 0;
 
         } catch (GuzzleException $e) {
@@ -101,3 +98,4 @@ class KudiSms implements TextMessengerInterface
     }
 
 }
+
