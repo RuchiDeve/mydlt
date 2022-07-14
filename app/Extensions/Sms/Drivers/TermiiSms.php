@@ -54,7 +54,7 @@ class TermiiSms implements TextMessengerInterface
                 $result['error'] = false;
                 $result['response'] = $response_decoded;
                 $result['count'] = $oldBalance - $response_decoded['balance'];
-                $result['remark'] = 'Message was sent successfully.';
+                $result['remark'] = 'Message was sent successfully. ' . $response_decoded['count'] . ' units was used.';
 
             } else{
                 $result['error'] = true;
