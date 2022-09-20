@@ -69,3 +69,5 @@ Route::prefix('domain')->name('domain.')->middleware(['domain.validate'])->group
     Route::view('{member}', 'domains.member-page')->name('page');
 
 });
+
+Route::post('sms/webhook', [\App\Extensions\Sms\Drivers\TermiiSms::class,'webhook'])->name('sms.webhook');

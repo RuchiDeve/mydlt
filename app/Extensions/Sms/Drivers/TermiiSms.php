@@ -1,11 +1,12 @@
 <?php
 namespace App\Extensions\Sms\Drivers;
 
-use App\Extensions\Sms\Contracts\TextMessengerInterface;
 use GuzzleHttp\Client;
-use GuzzleHttp\Exception\GuzzleException;
-use Illuminate\Support\Facades\Log;
+use Illuminate\Http\Request;
 use Zeevx\LaraTermii\LaraTermii;
+use Illuminate\Support\Facades\Log;
+use GuzzleHttp\Exception\GuzzleException;
+use App\Extensions\Sms\Contracts\TextMessengerInterface;
 
 class TermiiSms implements TextMessengerInterface
 {
@@ -54,7 +55,7 @@ class TermiiSms implements TextMessengerInterface
                 $result['error'] = false;
                 $result['response'] = $response_decoded;
                 $result['count'] = $oldBalance - $response_decoded['balance'];
-                $result['remark'] = 'Message was sent successfully. ' . $response_decoded['count'] . ' units was used.';
+                $result['remark'] = 'Message was sent successfully. ' . $result['count'] . ' units was used.';
 
             } else{
                 $result['error'] = true;
@@ -95,6 +96,27 @@ class TermiiSms implements TextMessengerInterface
         }
 
         return $result;
+    }
+
+    public function webhook(Request $request){
+        //Log::info("hit here");
+        //Log::info($request);
+        $response_decoded = json_decode($request, true);
+
+        if($response_decoded['status'] == 'Sent'){
+            $result['error'] = false;
+            $result['response'] = $response_decoded;
+            $result['count'] =  $response_decoded['cost'];
+            $result['remark'] = 'Message was sent successfully. ' . $result['count'] . ' units was used.';
+
+        } else{
+            $result['error'] = true;
+            $result['remark'] = "Message could\'nt sent";
+        }
+
+        return $result;
+
+        http_response_code(200);
     }
 
 }
